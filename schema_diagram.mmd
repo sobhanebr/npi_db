@@ -1,0 +1,84 @@
+%% NPI Database – Relational Schema Diagram (1NF)
+%% Render in VS Code (Mermaid extension), GitHub, or https://mermaid.live
+
+erDiagram
+    provider {
+        char npi PK "10-digit NPI"
+        tinyint entity_type_code "1=Individual 2=Org"
+        char replacement_npi
+        varchar org_name "Legal Business Name"
+        varchar ein
+        varchar last_name
+        varchar first_name
+        varchar middle_name
+        varchar credential
+        char sex_code
+        varchar mailing_address_line1
+        varchar mailing_city
+        varchar mailing_state
+        varchar practice_address_line1
+        varchar practice_city
+        varchar practice_state
+        date enumeration_date
+        date last_update_date
+        varchar auth_last_name
+        varchar parent_org_lbn
+        date certification_date
+    }
+
+    taxonomy {
+        varchar taxonomy_code PK "NUCC code"
+    }
+
+    provider_taxonomy {
+        int id PK
+        char npi FK
+        varchar taxonomy_code FK
+        varchar license_number
+        varchar license_state_code
+        char is_primary "Y/N"
+        varchar taxonomy_group
+        tinyint slot_order "1..15"
+    }
+
+    other_provider_identifier {
+        int id PK
+        char npi FK
+        varchar identifier
+        varchar type_code
+        varchar state
+        varchar issuer
+        tinyint slot_order "1..50"
+    }
+
+    other_name {
+        int id PK
+        char npi FK
+        varchar other_org_name
+        varchar other_org_name_type_code
+    }
+
+    secondary_practice_location {
+        int id PK
+        char npi FK
+        varchar address_line1
+        varchar city
+        varchar state
+        varchar postal_code
+        varchar telephone
+    }
+
+    endpoint {
+        int id PK
+        char npi FK
+        varchar endpoint_type
+        varchar endpoint_value
+        varchar affiliation_lbn
+    }
+
+    provider ||--o{ provider_taxonomy : "has taxonomies"
+    taxonomy ||--o{ provider_taxonomy : "assigned to"
+    provider ||--o{ other_provider_identifier : "has identifiers"
+    provider ||--o{ other_name : "has other names"
+    provider ||--o{ secondary_practice_location : "has locations"
+    provider ||--o{ endpoint : "has endpoints"
